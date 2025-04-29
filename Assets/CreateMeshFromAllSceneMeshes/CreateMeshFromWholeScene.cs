@@ -159,26 +159,30 @@ public class CreateSceneMesh : MonoBehaviour
 
         public void Execute(int index)
         {
+            //重新定义变量，减少访存
+            var tempVerti = tempVertices;
+            var tempNorm = tempNormals;
+
             var data = meshData[index];
             var vCount = data.vertexCount;
             var mat = xform[index];
             var vStart = vertexStart[index];
 
             // Allocate temporary arrays for input mesh vertices/normals
-            if (!tempVertices.IsCreated || tempVertices.Length < vCount)
+            if (!tempVerti.IsCreated || tempVerti.Length < vCount)
             {
-                if (tempVertices.IsCreated) tempVertices.Dispose();
-                tempVertices = new NativeArray<float3>(vCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+                if (tempVerti.IsCreated) tempVerti.Dispose();
+                tempVerti = new NativeArray<float3>(vCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
             }
-            if (!tempNormals.IsCreated || tempNormals.Length < vCount)
+            if (!tempNorm.IsCreated || tempNorm.Length < vCount)
             {
-                if (tempNormals.IsCreated) tempNormals.Dispose();
-                tempNormals = new NativeArray<float3>(vCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+                if (tempNorm.IsCreated) tempNorm.Dispose();
+                tempNorm = new NativeArray<float3>(vCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
             }
             // Read input mesh vertices/normals into temporary arrays -- this will
             // do any necessary format conversions into float3 data
-            data.GetVertices(tempVertices.Reinterpret<Vector3>());
-            data.GetNormals(tempNormals.Reinterpret<Vector3>());
+            data.GetVertices(tempVerti.Reinterpret<Vector3>());
+            data.GetNormals(tempNorm.Reinterpret<Vector3>());
 
             var outputVerts = outputMesh.GetVertexData<Vector3>();
             var outputNormals = outputMesh.GetVertexData<Vector3>(stream:1);
@@ -188,10 +192,10 @@ public class CreateSceneMesh : MonoBehaviour
             var b = bounds[index];
             for (var i = 0; i < vCount; ++i)
             {
-                var pos = tempVertices[i];
+                var pos = tempVerti[i];
                 pos = math.mul(mat, new float4(pos, 1)).xyz;
                 outputVerts[i+vStart] = pos;
-                var nor = tempNormals[i];
+                var nor = tempNorm[i];
                 nor = math.normalize(math.mul(mat, new float4(nor, 0)).xyz);
                 outputNormals[i+vStart] = nor;
                 b.c0 = math.min(b.c0, pos);
