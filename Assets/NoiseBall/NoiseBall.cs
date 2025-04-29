@@ -124,7 +124,7 @@ public class NoiseBall : MonoBehaviour
         public float pExtent;
         public float pNoiseFrequency;
         public float pNoiseAmplitude;
-        public float3 pNoiseOffset;
+        public float4 pNoiseOffset;
 
         public void Execute(int id)
         {
@@ -148,9 +148,9 @@ public class NoiseBall : MonoBehaviour
             v2 = normalize(v1 + normalize(v2 - v1) * pExt);
             v3 = normalize(v1 + normalize(v3 - v1) * pExt);
 
-            float l1 = SimplexNoise3D.snoise(v1 * pNoiseFre + pNoiseOff).w;
-            float l2 = SimplexNoise3D.snoise(v2 * pNoiseFre + pNoiseOff).w;
-            float l3 = SimplexNoise3D.snoise(v3 * pNoiseFre + pNoiseOff).w;
+            float l1 = SimplexNoise3D.snoise(v1 * pNoiseFre + pNoiseOff.xyz).w;
+            float l2 = SimplexNoise3D.snoise(v2 * pNoiseFre + pNoiseOff.xyz).w;
+            float l3 = SimplexNoise3D.snoise(v3 * pNoiseFre + pNoiseOff.xyz).w;
 
             l1 = abs(l1 * l1 * l1);
             l2 = abs(l2 * l2 * l2);
@@ -179,7 +179,7 @@ public class NoiseBall : MonoBehaviour
             pExtent = m_TriangleExtent * (cos(t*1.3f) * 0.3f + 1),
             pNoiseFrequency = m_NoiseFrequency * (sin(t) * 0.5f + 1),
             pNoiseAmplitude = m_NoiseAmplitude * (cos(t*1.7f) * 0.3f + 1),
-            pNoiseOffset = m_NoiseOffset,
+            pNoiseOffset = new float4(m_NoiseOffset,0),
             vertices = m_VertexPos,
             normals = m_VertexNor
         };
