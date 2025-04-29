@@ -203,18 +203,11 @@ public class CreateSceneMesh : MonoBehaviour
             var tStart = indexStart[index];
             var tCount = data.GetSubMesh(0).indexCount;
             var outputTris = outputMesh.GetIndexData<int>();
-            if (data.indexFormat == IndexFormat.UInt16)
-            {
-                var tris = data.GetIndexData<ushort>();
-                for (var i = 0; i < tCount; ++i)
-                    outputTris[i + tStart] = vStart + tris[i];
-            }
-            else
-            {
-                var tris = data.GetIndexData<int>();
-                for (var i = 0; i < tCount; ++i)
-                    outputTris[i + tStart] = vStart + tris[i];
-            }
+            
+            var tris = data.indexFormat == IndexFormat.UInt16 ? data.GetIndexData<ushort>() : data.GetIndexData<int>();
+
+            for (var i = 0; i < tCount; ++i)
+                outputTris[i + tStart] = vStart + tris[i];
         }
     }
 
