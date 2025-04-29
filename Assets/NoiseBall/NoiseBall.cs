@@ -128,29 +128,37 @@ public class NoiseBall : MonoBehaviour
 
         public void Execute(int id)
         {
+            //重新定义变量，减少全局内存的访问
+            var pTi = pTime;
+            var pExt = pExtent;
+            var pNoiseFre = pNoiseFrequency;
+            var pNoiseAmpl = pNoiseAmplitude;
+            var pNoiseOff = pNoiseOffset;
+             
+
             int idx1 = id * 3;
             int idx2 = id * 3 + 1;
             int idx3 = id * 3 + 2;
 
-            float seed = floor(pTime + id * 0.1f) * 0.1f;
+            float seed = floor(pTi + id * 0.1f) * 0.1f;
             float3 v1 = RandomPoint(idx1 + seed);
             float3 v2 = RandomPoint(idx2 + seed);
             float3 v3 = RandomPoint(idx3 + seed);
 
-            v2 = normalize(v1 + normalize(v2 - v1) * pExtent);
-            v3 = normalize(v1 + normalize(v3 - v1) * pExtent);
+            v2 = normalize(v1 + normalize(v2 - v1) * pExt);
+            v3 = normalize(v1 + normalize(v3 - v1) * pExt);
 
-            float l1 = SimplexNoise3D.snoise(v1 * pNoiseFrequency + pNoiseOffset).w;
-            float l2 = SimplexNoise3D.snoise(v2 * pNoiseFrequency + pNoiseOffset).w;
-            float l3 = SimplexNoise3D.snoise(v3 * pNoiseFrequency + pNoiseOffset).w;
+            float l1 = SimplexNoise3D.snoise(v1 * pNoiseFre + pNoiseOff).w;
+            float l2 = SimplexNoise3D.snoise(v2 * pNoiseFre + pNoiseOff).w;
+            float l3 = SimplexNoise3D.snoise(v3 * pNoiseFre + pNoiseOff).w;
 
             l1 = abs(l1 * l1 * l1);
             l2 = abs(l2 * l2 * l2);
             l3 = abs(l3 * l3 * l3);
 
-            v1 *= 1 + l1 * pNoiseAmplitude;
-            v2 *= 1 + l2 * pNoiseAmplitude;
-            v3 *= 1 + l3 * pNoiseAmplitude;
+            v1 *= 1 + l1 * pNoiseAmpl;
+            v2 *= 1 + l2 * pNoiseAmpl;
+            v3 *= 1 + l3 * pNoiseAmpl;
 
             float3 n = normalize(cross(v2 - v1, v3 - v2));
 
