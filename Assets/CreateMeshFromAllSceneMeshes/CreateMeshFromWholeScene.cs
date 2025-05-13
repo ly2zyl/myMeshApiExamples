@@ -24,6 +24,7 @@ public class CreateSceneMesh : MonoBehaviour
     static ProfilerMarker smp2 = new ProfilerMarker("Prepare");
     static ProfilerMarker smp3 = new ProfilerMarker("Create Mesh");
     static ProfilerMarker smp4 = new ProfilerMarker("Cleanup");
+    static ProfilerMarker smpJobSchedule = new ProfilerMarker("Job Schedule + Execute");
 
     #if UNITY_EDITOR
     // ----------------------------------------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ public class CreateSceneMesh : MonoBehaviour
     [MenuItem("Mesh API Test/Create Mesh From Scene - New API %G")]
     public static void CreateMesh_MeshDataApi()
     {
-        static ProfilerMarker smpJobSchedule = new ProfilerMarker("Job Schedule + Execute");
+        
         var sw = Stopwatch.StartNew();
 
         // Find all MeshFilter objects in the scene
