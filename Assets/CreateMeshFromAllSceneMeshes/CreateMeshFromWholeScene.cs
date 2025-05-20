@@ -24,7 +24,7 @@ public class CreateSceneMesh : MonoBehaviour
     static ProfilerMarker smp2 = new ProfilerMarker("Prepare");
     static ProfilerMarker smp3 = new ProfilerMarker("Create Mesh");
     static ProfilerMarker smp4 = new ProfilerMarker("Cleanup");
-    static ProfilerMarker smpJobSchedule = new ProfilerMarker("Job Schedule + Execute");
+    
 
     #if UNITY_EDITOR
     // ----------------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public class CreateSceneMesh : MonoBehaviour
             new VertexAttributeDescriptor(VertexAttribute.Position),
             new VertexAttributeDescriptor(VertexAttribute.Normal, stream:1));
 
-        smpJobSchedule.Begin(); // 开始统计
+        
         // Launch mesh processing jobs
         var handle = jobs.Schedule(meshCount, 4);
 
@@ -103,7 +103,7 @@ public class CreateSceneMesh : MonoBehaviour
 
         // Wait for jobs to finish, since we'll have to access the produced mesh/bounds data at this point
         handle.Complete();
-        smpJobSchedule.End(); // 结束统计
+        
 
         // Final bounding box of the whole mesh is union of the bounds of individual transformed meshes
         var bounds = new float3x2(new float3(Mathf.Infinity), new float3(Mathf.NegativeInfinity));
