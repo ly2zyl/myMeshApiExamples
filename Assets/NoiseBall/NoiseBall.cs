@@ -124,9 +124,9 @@ public class NoiseBall : MonoBehaviour
         public float pExtent;
         public float pNoiseFrequency;
         public float pNoiseAmplitude;
-        public float4 pNoiseOffset;
+        public float3 pNoiseOffset;
 
-        public void Execute(int id)
+         public void Execute(int id)
         {
             float noiseFreq = pNoiseFrequency;
             float noiseAmp = pNoiseAmplitude;
@@ -137,7 +137,7 @@ public class NoiseBall : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 int original_id = id * 4 + i;
-
+                
                 int idx1 = original_id * 3;
                 int idx2 = original_id * 3 + 1;
                 int idx3 = original_id * 3 + 2;
@@ -181,7 +181,7 @@ public class NoiseBall : MonoBehaviour
             pExtent = m_TriangleExtent * (cos(t*1.3f) * 0.3f + 1),
             pNoiseFrequency = m_NoiseFrequency * (sin(t) * 0.5f + 1),
             pNoiseAmplitude = m_NoiseAmplitude * (cos(t*1.7f) * 0.3f + 1),
-            pNoiseOffset = new float4(m_NoiseOffset,0),
+            pNoiseOffset = m_NoiseOffset,
             vertices = m_VertexPos,
             normals = m_VertexNor
         };
@@ -212,12 +212,12 @@ public class NoiseBall : MonoBehaviour
         }
         else if (m_Mode == Mode.CPUBurst)
         {
-            job.Schedule(m_TriangleCount, m_TriangleCount).Complete();
+            int totalJobs = Mathf.CeilToInt(m_TriangleCount / 4f);
+            job.Schedule(totalJobs, totalJobs).Complete();
         }
         else if (m_Mode == Mode.CPUBurstThreaded)
         {
-            int totalJobs = Mathf.CeilToInt(m_TriangleCount / 4f);
-            job.Schedule(totalJobs, totalJobs).Complete();
+            job.Schedule(m_TriangleCount, 4).Complete();
         }
         m_Mesh.SetVertexBufferData(m_VertexPos, 0, 0, m_VertexPos.Length, 0, MeshUpdateFlags.DontRecalculateBounds);
         m_Mesh.SetVertexBufferData(m_VertexNor, 0, 0, m_VertexNor.Length, 1, MeshUpdateFlags.DontRecalculateBounds);
